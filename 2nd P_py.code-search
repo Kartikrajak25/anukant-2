@@ -1,0 +1,71 @@
+# Query: 2nd P.py
+# ContextLines: 1
+
+No Resultsimport pandas as pd
+import matplotlib.pyplot as plt
+
+# Data
+data = {
+    'Date': ['2024-01-01', '2024-01-02', '2024-01-03', '2024-02-01', '2024-02-05', 
+             '2024-03-10', '2024-03-15', '2024-03-20'],
+    'Product': ['Product A', 'Product B', 'Product A', 'Product B', 'Product C', 
+                'Product A', 'Product C', 'Product B'],
+    'Units Sold': [120, 80, 150, 90, 60, 200, 100, 120],
+    'Unit Price': [10, 20, 10, 20, 15, 10, 15, 20],
+    'Promotion Applied': ['No', 'Yes', 'No', 'Yes', 'No', 'Yes', 'No', 'Yes']
+}
+
+# Create DataFrame
+df = pd.DataFrame(data)
+df['Date'] = pd.to_datetime(df['Date'])
+df['Revenue'] = df['Units Sold'] * df['Unit Price']
+df['Month'] = df['Date'].dt.to_period('M')
+
+# 1. Total Revenue
+total_revenue = df['Revenue'].sum()
+print(f"Total Revenue: ₹{total_revenue}")
+
+# 2. Revenue per Product
+revenue_by_product = df.groupby('Product')['Revenue'].sum()
+print("\n Revenue by Product:")
+print(revenue_by_product)
+
+# 3. Monthly Revenue
+monthly_revenue = df.groupby('Month')['Revenue'].sum()
+print("\n Monthly Revenue:")
+print(monthly_revenue)
+
+# 4. Promotion Impact
+promotion_revenue = df.groupby('Promotion Applied')['Revenue'].sum()
+print("\nRevenue by Promotion:")
+print(promotion_revenue)
+
+# -------------------- Visualization --------------------
+
+# Bar Chart: Revenue by Product
+plt.figure(figsize=(8, 5))
+revenue_by_product.plot(kind='bar', color='skyblue')
+plt.title('Revenue by Product')
+plt.ylabel('Revenue (₹)')
+plt.xlabel('Product')
+plt.tight_layout()
+plt.grid(axis='y')
+plt.show()
+
+# Line Chart: Monthly Revenue
+plt.figure(figsize=(8, 5))
+monthly_revenue.plot(marker='o', color='orange')
+plt.title('Monthly Revenue Trend')
+plt.ylabel('Revenue (₹)')
+plt.xlabel('Month')
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+# Pie Chart: Revenue with/without Promotion
+plt.figure(figsize=(6, 6))
+promotion_revenue.plot(kind='pie', autopct='%1.1f%%', startangle=140)
+plt.title('Revenue Share by Promotion')
+plt.ylabel('')
+plt.tight_layout()
+plt.show()
